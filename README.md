@@ -1,4 +1,5 @@
 Hi there!
+
 This is a dedicated repo for upcomming onine workshop: 
 [Azure Workshop Wrocław #9 – Robert Przybylski Microsoft Azure WVD](https://www.eventbrite.com/e/azure-workshop-wrocaw-9-robert-przybylski-microsoft-azure-wvd-tickets-129207020677)
 
