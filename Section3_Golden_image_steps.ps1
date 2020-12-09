@@ -2,6 +2,7 @@ Throw "This is not a robust file"
 
 $oldVerbose = $VerbosePreference
 $VerbosePreference = "continue" 
+
 #Region Section 3 VM values declaration
 Write-Verbose "Section 3 - VM values declaration"
 $ResourceLocation = "NorthEurope"
