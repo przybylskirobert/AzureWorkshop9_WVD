@@ -47,36 +47,36 @@ foreach ($entry in $WVDConfig) {
         $aplicationGroupType = "RemoteApp"
     }
 
-    $workspacetest = Get-AzWvdWorkspace -Name $workspaceName -ResourceGroupName $ResourceGroupName -ErrorAction SilentlyContinue
+    $workspacetest = Get-AzWvdWorkspace -Name $workspaceName -ResourceGroupName $vwdResourceGroupName -ErrorAction SilentlyContinue
     if ($workspacetest.count -eq 0) {
-        Write-Verbose "Creating new Workspace:'$workspaceName' in resourcegroup: '$ResourceGroupName', under location: '$WVDLocation'"
-        New-AzWvdWorkspace -Name $workspaceName -ResourceGroupName $ResourceGroupName -Location $WVDLocation
+        Write-Verbose "Creating new Workspace:'$workspaceName' in resourcegroup: '$vwdResourceGroupName', under location: '$WVDLocation'"
+        New-AzWvdWorkspace -Name $workspaceName -ResourceGroupName $vwdResourceGroupName -Location $WVDLocation
     }
     else {
         Write-Verbose "Workspace:'$workspaceName' already exist."
     }
-    $hostpooltest = Get-AzWvdHostPool -Name $hostPoolName -ResourceGroupName $ResourceGroupName  -ErrorAction SilentlyContinue
+    $hostpooltest = Get-AzWvdHostPool -Name $hostPoolName -ResourceGroupName $vwdResourceGroupName  -ErrorAction SilentlyContinue
     if ($hostpooltest.count -eq 0) {
-        Write-Verbose "Creating new HostPool :'$hostPoolName' in resourcegroup: '$ResourceGroupName', under location: '$WVDLocation'"
-        New-AzWvdHostPool -Name $hostPoolName -ResourceGroupName $ResourceGroupName -Location $WVDLocation -HostPoolType Pooled -LoadBalancerType DepthFirst -PreferredAppGroupType $preferedAppGroupType -MaxSessionLimit $maxLimit
-        New-AzWvdRegistrationInfo -ResourceGroupName $ResourceGroupName -HostPoolName $hostPoolName -ExpirationTime $((get-date).ToUniversalTime().AddDays(30).ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))
+        Write-Verbose "Creating new HostPool :'$hostPoolName' in resourcegroup: '$vwdResourceGroupName', under location: '$WVDLocation'"
+        New-AzWvdHostPool -Name $hostPoolName -ResourceGroupName $vwdResourceGroupName -Location $WVDLocation -HostPoolType Pooled -LoadBalancerType DepthFirst -PreferredAppGroupType $preferedAppGroupType -MaxSessionLimit $maxLimit
+        New-AzWvdRegistrationInfo -ResourceGroupName $vwdResourceGroupName -HostPoolName $hostPoolName -ExpirationTime $((get-date).ToUniversalTime().AddDays(30).ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))
     }
     else {
         Write-Verbose "HostPool:'$hostPoolName' already exist."
     }
-    $applicationGroupTest = Get-AzWvdApplicationGroup -Name $appGroupName -ResourceGroupName $ResourceGroupName -ErrorAction SilentlyContinue
+    $applicationGroupTest = Get-AzWvdApplicationGroup -Name $appGroupName -ResourceGroupName $vwdResourceGroupName -ErrorAction SilentlyContinue
     if ($applicationGroupTest.count -eq 0) {
-        Write-Verbose "Creating new ApplicationGroup:'$appGroupName' in resourcegroup: '$ResourceGroupName', under location: '$WVDLocation'"
-        $hostPoolID = (Get-AzWvdHostPool -Name $hostPoolName -ResourceGroupName $ResourceGroupName).id
-        New-AzWvdApplicationGroup -Name $appGroupName -ResourceGroupName $ResourceGroupName -Location $WVDLocation -FriendlyName $friendlyName -HostPoolArmPath $hostPoolID -ApplicationGroupType $aplicationGroupType
-        $appGroupID = (Get-AzWvdApplicationGroup -Name $appGroupName -ResourceGroupName $ResourceGroupName).id
-        Update-AzWvdWorkspace -Name $workspaceName -ResourceGroupName $ResourceGroupName -ApplicationGroupReference $appGroupID
+        Write-Verbose "Creating new ApplicationGroup:'$appGroupName' in resourcegroup: '$vwdResourceGroupName', under location: '$WVDLocation'"
+        $hostPoolID = (Get-AzWvdHostPool -Name $hostPoolName -ResourceGroupName $vwdResourceGroupName).id
+        New-AzWvdApplicationGroup -Name $appGroupName -ResourceGroupName $vwdResourceGroupName -Location $WVDLocation -FriendlyName $friendlyName -HostPoolArmPath $hostPoolID -ApplicationGroupType $aplicationGroupType
+        $appGroupID = (Get-AzWvdApplicationGroup -Name $appGroupName -ResourceGroupName $vwdResourceGroupName).id
+        Update-AzWvdWorkspace -Name $workspaceName -ResourceGroupName $vwdResourceGroupName -ApplicationGroupReference $appGroupID
     }
     else {
         Write-Verbose "ApplicationGroup:'$appGroupName' already exist."
     }
     Write-Verbose "Assigning group '$WVDusersGroupName' to the Application Group '$appGroupName'"
-    New-AzRoleAssignment -ObjectId $wvd_UsersGroup.ObjectID -RoleDefinitionName "Desktop Virtualization User" -ResourceName $appGroupName -ResourceGroupName $resourceGroupName -ResourceType 'Microsoft.DesktopVirtualization/applicationGroups'
+    New-AzRoleAssignment -ObjectId $wvd_UsersGroup.ObjectID -RoleDefinitionName "Desktop Virtualization User" -ResourceName $appGroupName -ResourceGroupName $vwdResourceGroupName -ResourceType 'Microsoft.DesktopVirtualization/applicationGroups'
 }
 #endregion
 
